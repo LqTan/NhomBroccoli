@@ -1,0 +1,130 @@
+﻿@model NhomBroccoli.Models.PaymentAndCartItems
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__links">
+                    <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i> Home</a>
+                    <span>Shopping cart</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="shop-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shop__cart__table">
+                    <form asp-action="UpdateCart" method="post">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>                                    
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cartItem in Model.CartItems)
+                                {
+                                    <tr>
+                                        <td class="cart__product__item">
+                                            <img src="@Url.Content(cartItem.Product.ProductImages.ElementAt(0).Img)" alt="" style="max-height:100px">
+                                            <div class="cart__product__item__title">
+                                                @if (cartItem.ProductSize.Size != null)
+                                                {
+                                                    <h6>@cartItem.Product.Name | @cartItem.ProductSize.Size</h6>
+                                                }
+                                                else
+                                                {
+                                                    <h6>@cartItem.Product.Name</h6>
+                                                }
+                                                <div class="rating">
+                                                    @{
+                                                        int rate = (int)cartItem.Product.Rate;
+                                                        for (int i = 1; i <= rate; i++)
+                                                        {
+                                                            <i class="fa fa-star"></i>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="cart__price">$ @cartItem.Product.Price</td>                                        
+                                        <td class="cart__quantity">
+                                            <div class="text-center">
+                                                <input type="hidden" name="CartItems.Index" value="@cartItem.Id" />
+                                                <input type="hidden" name="CartItems[@cartItem.Id].Id" value="@cartItem.Id" />
+                                                <input type="hidden" name="CartItems[@cartItem.Id].ProductId" value="@cartItem.ProductId" />
+                                                <input type="hidden" name="CartItems[@cartItem.Id].ProductSizeId" value="@cartItem.ProductSizeId" />
+                                                <input type="number" name="CartItems[@cartItem.Id].Quantity" value="@cartItem.Quantity" min="1" style="border:none;outline:none;max-width:100px">
+                                            </div>
+                                        </td>
+                                        <td class="cart__total">$ @cartItem.Amount</td>
+                                        <td class="cart__close">
+                                            <a href="@Url.Action("DeleteViewHandler", "CartItems", new {id = cartItem.Id})">
+                                                <span class="icon_close"></span>
+                                            </a>                                            
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="cart__btn">
+                                    <a href="@Url.Action("Index", "Shop")">Continue Shopping</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="cart__btn update__btn">
+                                    <button type="submit" style="border:none; outline:none"><span class="icon_loading"></span> Update cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="discount__content">
+                    <h6>Discount codes</h6>
+                    <form asp-action="ApplyDiscount" asp-controller="Discounts">
+                        <input type="hidden" name="OrderId" value="@Model.Payment.OrderId" />
+                        <input type="hidden" name="PaymentId" value="@Model.Payment.Id" />
+                        <input type="text" name="CouponCode" placeholder="Enter your coupon code">
+                        <button type="submit" class="site-btn">Apply</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-4 offset-lg-2">
+                <div class="cart__total__procced">
+                    <h6>Cart total</h6>
+                    <ul>
+                        @{
+                            var subtotal = 0.0;
+                            foreach(var cartItem in Model.CartItems)
+                            {
+                                subtotal += (double)cartItem.Amount;
+                            }
+                            <li>Subtotal <span>$ @subtotal</span></li>
+                            <li>Total <span>$ @Model.Payment.Total</span></li>
+                        }                        
+                    </ul>
+                    <a href="@Url.Action("Index", "Checkout")" class="primary-btn">Proceed to checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

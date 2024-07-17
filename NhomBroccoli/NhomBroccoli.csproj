@@ -1,0 +1,110 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Assets\CSS\style.css" />
+    <None Include="wwwroot\Assets\img\banner\banner-1.jpg" />
+    <None Include="wwwroot\Assets\img\banner\banner-2.jpg" />
+    <None Include="wwwroot\Assets\img\banner\banner-3.jpg" />
+    <None Include="wwwroot\Assets\img\blog\blog-1.jpg" />
+    <None Include="wwwroot\Assets\img\blog\blog-10.jpg" />
+    <None Include="wwwroot\Assets\img\blog\blog-2.jpg" />
+    <None Include="wwwroot\Assets\img\blog\blog-3.jpg" />
+    <None Include="wwwroot\Assets\img\blog\blog-4.jpg" />
+    <None Include="wwwroot\Assets\img\blog\blog-5.jpg" />
+    <None Include="wwwroot\Assets\img\blog\blog-6.jpg" />
+    <None Include="wwwroot\Assets\img\blog\blog-7.jpg" />
+    <None Include="wwwroot\Assets\img\blog\blog-8.jpg" />
+    <None Include="wwwroot\Assets\img\blog\blog-9.jpg" />
+    <None Include="wwwroot\Assets\img\blog\details\blog-details.jpg" />
+    <None Include="wwwroot\Assets\img\blog\details\comment-1.jpg" />
+    <None Include="wwwroot\Assets\img\blog\details\comment-2.jpg" />
+    <None Include="wwwroot\Assets\img\blog\details\comment-3.jpg" />
+    <None Include="wwwroot\Assets\img\blog\sidebar\fp-1.jpg" />
+    <None Include="wwwroot\Assets\img\blog\sidebar\fp-2.jpg" />
+    <None Include="wwwroot\Assets\img\blog\sidebar\fp-3.jpg" />
+    <None Include="wwwroot\Assets\img\categories\category-1.jpg" />
+    <None Include="wwwroot\Assets\img\categories\category-2.jpg" />
+    <None Include="wwwroot\Assets\img\categories\category-3.jpg" />
+    <None Include="wwwroot\Assets\img\categories\category-4.jpg" />
+    <None Include="wwwroot\Assets\img\categories\category-5.jpg" />
+    <None Include="wwwroot\Assets\img\discount.jpg" />
+    <None Include="wwwroot\Assets\img\instagram\insta-1.jpg" />
+    <None Include="wwwroot\Assets\img\instagram\insta-2.jpg" />
+    <None Include="wwwroot\Assets\img\instagram\insta-3.jpg" />
+    <None Include="wwwroot\Assets\img\instagram\insta-4.jpg" />
+    <None Include="wwwroot\Assets\img\instagram\insta-5.jpg" />
+    <None Include="wwwroot\Assets\img\instagram\insta-6.jpg" />
+    <None Include="wwwroot\Assets\img\logo.png" />
+    <None Include="wwwroot\Assets\img\payment\payment-1.png" />
+    <None Include="wwwroot\Assets\img\payment\payment-2.png" />
+    <None Include="wwwroot\Assets\img\payment\payment-3.png" />
+    <None Include="wwwroot\Assets\img\payment\payment-4.png" />
+    <None Include="wwwroot\Assets\img\payment\payment-5.png" />
+    <None Include="wwwroot\Assets\img\product\details\product-1.jpg" />
+    <None Include="wwwroot\Assets\img\product\details\product-2.jpg" />
+    <None Include="wwwroot\Assets\img\product\details\product-3.jpg" />
+    <None Include="wwwroot\Assets\img\product\details\product-4.jpg" />
+    <None Include="wwwroot\Assets\img\product\details\thumb-1.jpg" />
+    <None Include="wwwroot\Assets\img\product\details\thumb-2.jpg" />
+    <None Include="wwwroot\Assets\img\product\details\thumb-3.jpg" />
+    <None Include="wwwroot\Assets\img\product\details\thumb-4.jpg" />
+    <None Include="wwwroot\Assets\img\product\product-1.jpg" />
+    <None Include="wwwroot\Assets\img\product\product-2.jpg" />
+    <None Include="wwwroot\Assets\img\product\product-3.jpg" />
+    <None Include="wwwroot\Assets\img\product\product-4.jpg" />
+    <None Include="wwwroot\Assets\img\product\product-5.jpg" />
+    <None Include="wwwroot\Assets\img\product\product-6.jpg" />
+    <None Include="wwwroot\Assets\img\product\product-7.jpg" />
+    <None Include="wwwroot\Assets\img\product\product-8.jpg" />
+    <None Include="wwwroot\Assets\img\product\related\rp-1.jpg" />
+    <None Include="wwwroot\Assets\img\product\related\rp-2.jpg" />
+    <None Include="wwwroot\Assets\img\product\related\rp-3.jpg" />
+    <None Include="wwwroot\Assets\img\product\related\rp-4.jpg" />
+    <None Include="wwwroot\Assets\img\shop-cart\cp-1.jpg" />
+    <None Include="wwwroot\Assets\img\shop-cart\cp-2.jpg" />
+    <None Include="wwwroot\Assets\img\shop-cart\cp-3.jpg" />
+    <None Include="wwwroot\Assets\img\shop-cart\cp-4.jpg" />
+    <None Include="wwwroot\Assets\img\shop\shop-1.jpg" />
+    <None Include="wwwroot\Assets\img\shop\shop-2.jpg" />
+    <None Include="wwwroot\Assets\img\shop\shop-3.jpg" />
+    <None Include="wwwroot\Assets\img\shop\shop-4.jpg" />
+    <None Include="wwwroot\Assets\img\shop\shop-5.jpg" />
+    <None Include="wwwroot\Assets\img\shop\shop-6.jpg" />
+    <None Include="wwwroot\Assets\img\shop\shop-7.jpg" />
+    <None Include="wwwroot\Assets\img\shop\shop-8.jpg" />
+    <None Include="wwwroot\Assets\img\shop\shop-9.jpg" />
+    <None Include="wwwroot\Assets\img\trend\bs-1.jpg" />
+    <None Include="wwwroot\Assets\img\trend\bs-2.jpg" />
+    <None Include="wwwroot\Assets\img\trend\bs-3.jpg" />
+    <None Include="wwwroot\Assets\img\trend\f-1.jpg" />
+    <None Include="wwwroot\Assets\img\trend\f-2.jpg" />
+    <None Include="wwwroot\Assets\img\trend\f-3.jpg" />
+    <None Include="wwwroot\Assets\img\trend\ht-1.jpg" />
+    <None Include="wwwroot\Assets\img\trend\ht-2.jpg" />
+    <None Include="wwwroot\Assets\img\trend\ht-3.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
+  </ItemGroup>	
+
+</Project>

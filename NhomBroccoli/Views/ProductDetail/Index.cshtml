@@ -1,0 +1,191 @@
+﻿@model NhomBroccoli.Data.Entities.Product;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__links">
+                    <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i> Home</a>
+                    <a href="@Url.Action("Index", "Shop")">Shop</a>
+                    <span>@Model.Name</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="product-details spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="product__details__pic">
+                    <div class="product__details__pic__left product__thumb nice-scroll">
+                        <a class="pt active" href="#product-1">
+                            <img src="@Url.Content(Model.ProductImages.ElementAt(0).Img)" alt="">
+                        </a>
+                        @{
+                            for (int i = 2; i <= 4; i++)
+                            {
+                                if (Model.ProductImages.Count >= i)
+                                {
+                                    <a class="pt" href="#product-@i">
+                                        <img src="@Url.Content(Model.ProductImages.ElementAt(i - 1).Img)" alt="">
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="pt" href="#product-@i">
+                                        <img src="~/Assets/img/not_found.png" alt="">
+                                    </a>
+                                }                                
+                            }
+                        }                        
+                    </div>
+                    <div class="product__details__slider__content">
+                        <div class="product__details__pic__slider owl-carousel">
+                            @{
+                                for (int i = 1; i <= 4; i++)
+                                {
+                                    if (Model.ProductImages.Count >= i)
+                                    {
+                                        <img data-hash="product-@i" class="product__big__img" src="@Url.Content(Model.ProductImages.ElementAt(i - 1).Img)" alt="">
+                                    }
+                                    else
+                                    {
+                                        <img data-hash="product-@i" class="product__big__img" src="~/Assets/img/not_found.png" alt="">
+                                    }
+                                }
+                            }                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="product__details__text">
+                    <h3>@Model.Name <span>Brand: @(Model.Brand != null ? Model.Brand.Name : "Unknown")</span></h3>
+                    <div class="rating">
+                        @{
+                            int rate = (int)Model.Rate;
+                            for (int i = 1; i <= rate; i++)
+                            {
+                                <i class="fa fa-star"></i>
+                            }
+                        }
+                        <span>( 138 reviews )</span>
+                    </div>
+                    <div class="product__details__price">$ @Model.Price </div>
+                    <p>
+                        @(Model.Description != null ? Model.Description : "...")                        
+                    </p>
+                    <form asp-action="AddToCart" asp-controller="CartItems" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ProductId" value="@Model.Id" />
+                        <input type="hidden" name="Amount" value="@Model.Price" />                        
+
+                        <div class="product__details__button">
+                            <div class="quantity">
+                                <span>Quantity:</span>
+                                <div class="pro-qty">
+                                    <input type="number" name="Quantity" value=1 min=1>
+                                </div>
+                            </div>
+                            @* <a href="#" class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a> *@
+                            <button type="submit" class="cart-btn border-0"><span class="icon_bag_alt"></span> Add to cart</button>
+                            <ul>
+                                <li><a href="#"><span class="icon_heart_alt"></span></a></li>
+                                <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
+                            </ul>
+                        </div>
+                    
+                        <div class="product__details__widget">
+                            <ul>
+                                <li>
+                                    <span>Availability:</span>
+                                    <div class="stock__checkbox">
+                                        <label for="stockin">
+                                            In Stock
+                                            <input type="checkbox" id="stockin">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                </li>                            
+                                <li>
+                                    <span>Available size:</span>
+                                    <div class="size__btn">
+                                        @foreach(var size in Model.ProductSizes)
+                                        {
+                                            <label for="@size.Size">
+                                                <input type="radio" name="ProductSizeId" value="@size.Id" id="@size.Size">
+                                                @size.Size
+                                            </label>
+                                        }                                    
+                                    </div>
+                                </li>
+                                <li>
+                                    <span>Promotions:</span>
+                                    <p>Free shipping</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="product__details__tab">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab">Description</a>
+                        </li>
+                        @* <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">Specification</a>
+                        </li> *@
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab">Reviews ( 2 )</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tabs-1" role="tabpanel">
+                            <h6>Description</h6>
+                            <p>
+                                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed
+                                quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt loret.
+                                Neque porro lorem quisquam est, qui dolorem ipsum quia dolor si. Nemo enim ipsam
+                                voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed quia ipsu
+                                consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Nulla
+                                consequat massa quis enim.
+                            </p>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget
+                                dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,
+                                nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium
+                                quis, sem.
+                            </p>
+                        </div>                        
+                        <div class="tab-pane" id="tabs-3" role="tabpanel">
+                            <h6>Reviews ( 2 )</h6>
+                            <p>
+                                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed
+                                quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt loret.
+                                Neque porro lorem quisquam est, qui dolorem ipsum quia dolor si. Nemo enim ipsam
+                                voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed quia ipsu
+                                consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Nulla
+                                consequat massa quis enim.
+                            </p>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget
+                                dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,
+                                nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium
+                                quis, sem.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+</section>

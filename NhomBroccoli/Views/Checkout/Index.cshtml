@@ -1,0 +1,159 @@
+﻿@model NhomBroccoli.Models.CartItemsPaymentUser;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__links">
+                    <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i> Home</a>
+                    <span>Shopping cart</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="checkout spad">
+    <div class="container">
+        
+        <form asp-action="CompleteCheckout" asp-controller="Checkout" class="checkout__form">
+            <input type="hidden" name="PayPalId" id="paypal-order-id" />
+            <input type="hidden" name="OrderId" value="@Model.Payment.OrderId" />
+            <input type="hidden" name="PaymentId" value="@Model.Payment.Id" />
+            <input type="hidden" name="DeliveryDate" value="@DateOnly.FromDateTime(DateTime.Now)" />
+            <div class="row">
+                <div class="col-lg-8">
+                    <h5>Billing detail</h5>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="checkout__form__input">
+                                <p>First Name <span>*</span></p>
+                                <input type="text" value="@Model.User.FirstName">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="checkout__form__input">
+                                <p>Last Name <span>*</span></p>
+                                <input type="text" value="@Model.User.LastName">
+                            </div>
+                        </div>
+                        <div class="col-lg-12">                            
+                            <div class="checkout__form__input">
+                                <p>Address <span>*</span></p>
+                                <input type="text" name="Address" placeholder="Street Address" value="@Model.User.Address">
+                            </div>                                                
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="checkout__form__input">
+                                <p>Phone <span>*</span></p>
+                                <input type="text" value="@Model.User.PhoneNumber">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="checkout__form__input">
+                                <p>Email <span>*</span></p>
+                                <input type="text" value="@Model.User.Email">
+                            </div>
+                        </div>
+                        <div class="col-lg-12">                                                        
+                            <div class="checkout__form__input">
+                                <p>Order notes <span>*</span></p>
+                                <input type="text"
+                                       placeholder="Note about your order, e.g, special noe for delivery">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="checkout__order">
+                        <h5>Your order</h5>
+                        <div class="checkout__order__product">
+                            <ul>
+                                <li>
+                                    <span class="top__text">Product</span>
+                                    <span class="top__text__right">Total</span>
+                                </li>
+                                @{
+                                    for (int i = 1; i <= Model.CartItems.Count; i++)
+                                    {
+                                        <li>@i. @Model.CartItems.ElementAt(i - 1).Product.Name <span>$ @Model.CartItems.ElementAt(i - 1).Product.Price</span></li>
+                                    }
+                                }
+                                @* <li>01. Chain buck bag <span>$ 300.0</span></li>
+                                <li>02. Zip-pockets pebbled<br /> tote briefcase <span>$ 170.0</span></li>
+                                <li>03. Black jean <span>$ 170.0</span></li>
+                                <li>04. Cotton shirt <span>$ 110.0</span></li> *@
+                            </ul>
+                        </div>
+                        <div class="checkout__order__total">
+                            <ul>
+                                @{
+                                    double? total = 0;
+                                    foreach(var cartItem in Model.CartItems)
+                                    {
+                                        total += cartItem.Amount;
+                                    }
+                                    <li>Subtotal <span>$ @total</span></li>
+                                }
+                                @* <li>Subtotal <span>$ 750.0</span></li> *@
+                                <li>Total <span>$ @Model.Payment.Total</span></li>
+                            </ul>
+                        </div>
+                        
+                        <button type="submit" class="site-btn mb-4">Place order</button>
+                        <div id="paypal-button-container"></div>                        
+                        <button class="site-btn bg-dark text-light mt-4">VNPAY</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://www.paypal.com/sdk/js?client-id=Ad89K4RAjJmC0KBKC5KhCcZ_1j9_PbvsCcI5Q0U4dI3zCxLgSZrIB1qhGYPa80uu0r7qEeSSwMFbRlXC"></script>
+
+    <script>
+        $(function () {
+            var totalAmount = "@Model.Payment.Total";
+            paypal.Buttons({
+                createOrder: function(data, action) {
+                    return action.order.create({
+                        "purchase_units": [
+                            {
+                                "amount": {
+                                    "currency_code": "USD",
+                                    "value": totalAmount
+                                },
+                                "items": []
+                            }
+                        ]
+                    })
+                },
+                onApprove: function(data, action) {
+                    return action.order.capture().then(function (response) {
+                        console.log(response);
+
+                        if (response?.status === "COMPLETED") {
+                            console.log(response.id);
+                            $('#paypal-order-id').val(response.id);
+                            $('form.checkout__form').submit(); // Automatically submit the form
+                        }
+                    })
+                },
+                style: {
+                    layout: 'vertical',
+                    color: 'blue',
+                    shape: 'rect',
+                    label: 'paypal'
+                }
+            }).render('#paypal-button-container');
+
+        });
+    </script>
+}
