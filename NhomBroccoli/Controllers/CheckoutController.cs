@@ -38,6 +38,7 @@ namespace NhomBroccoli.Controllers
                 .FirstOrDefaultAsync(pm => pm.Status == 0 && pm.OrderId == existingOrder.Id);
 
             var cartItems = await _context.CartItems
+                .Where(c => c.Id == existingOrder.Id)
                 .Include(c => c.Order)
                 .Include(c => c.ProductSize)
                 .Include(c => c.Product)

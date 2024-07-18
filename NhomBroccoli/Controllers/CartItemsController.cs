@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using NhomBroccoli.Data.Context;
 using NhomBroccoli.Data.Entities;
 using NhomBroccoli.Models;
@@ -58,7 +59,7 @@ namespace NhomBroccoli.Controllers
                 .ToListAsync();
 
             existingPayment.Total = 0;
-            foreach(var cartItem in cartItems)
+            foreach (var cartItem in cartItems)
             {
                 existingPayment.Total += cartItem.Amount;
             }
@@ -79,6 +80,33 @@ namespace NhomBroccoli.Controllers
             };
 
             return View(paymentAndCartItems);
+
+            //var cart = Request.Cookies["Cart"] != null
+            //        ? JsonConvert.DeserializeObject<List<CartItem>>(Request.Cookies["Cart"])
+            //        : new List<CartItem>();
+            //var payment = JsonConvert.DeserializeObject<Payment>(Request.Cookies["Payment"]);
+
+            //var productIds = cart.Select(c => c.ProductId).ToList();
+            //var products = await _context.Products
+            //    .Where(p => productIds.Contains(p.Id))
+            //    .Include(p => p.ProductImages)
+            //    .ToListAsync();
+            //var productSizes = await _context.ProductSize
+            //    .Where(ps => productIds.Contains(ps.Id))
+            //    .ToListAsync();
+            //foreach (var item in cart)
+            //{
+            //    item.Product = products.FirstOrDefault(p => p.Id == item.ProductId);
+            //    item.ProductSize = productSizes.FirstOrDefault(ps => ps.Id == item.ProductId);
+            //}            
+
+            //var paymentAndCartItems = new PaymentAndCartItems
+            //{
+            //    CartItems = cart,
+            //    Payment = payment
+            //};
+
+            //return View(paymentAndCartItems);
         }
 
         // GET: CartItems/Details/5
@@ -142,7 +170,7 @@ namespace NhomBroccoli.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart([Bind("Id,OrderId,ProductId,ProductSizeId,Quantity,Amount")] CartItem cartItem)
         {
-            var token = HttpContext.Request.Cookies["SessionToken"];            
+            var token = HttpContext.Request.Cookies["SessionToken"];
             if (string.IsNullOrEmpty(token))
             {
                 return RedirectToAction("Index", "Login");
@@ -157,31 +185,70 @@ namespace NhomBroccoli.Controllers
             var existingOrder = await _context.Orders.FirstOrDefaultAsync(o => o.OrderStatus == 0 && o.UserId == user.Id);
 
             if (ModelState.IsValid)
-            {                                          
+            {
+                var cart = Request.Cookies["Cart"] != null
+                    ? JsonConvert.DeserializeObject<List<CartItem>>(Request.Cookies["Cart"])
+                    : new List<CartItem>();
 
-                var existingCartItem = await _context.CartItems.FirstOrDefaultAsync(c => c.ProductId == cartItem.ProductId && c.ProductSizeId == cartItem.ProductSizeId && c.OrderId == existingOrder.Id);                                
+                var existingCartItem = await _context.CartItems.FirstOrDefaultAsync(c => c.ProductId == cartItem.ProductId && c.ProductSizeId == cartItem.ProductSizeId && c.OrderId == existingOrder.Id);
 
                 if (existingCartItem == null)
                 {
-                    var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == cartItem.ProductId);    
-                    
+                    var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == cartItem.ProductId);
+
                     cartItem.Amount = product.Price * cartItem.Quantity;
+                    cart.Add(cartItem);
+                    Response.Cookies.Append("Cart", JsonConvert.SerializeObject(cart), new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                    });
 
                     cartItem.OrderId = existingOrder?.Id;
-                    _context.Add(cartItem); 
-                    await _context.SaveChangesAsync();                    
+                    _context.Add(cartItem);
+                    await _context.SaveChangesAsync();
 
                     return RedirectToAction(nameof(CartView));
                 }
                 var p = await _context.Products.FirstOrDefaultAsync(_ => _.Id == existingCartItem.ProductId);
                 existingCartItem.Quantity += cartItem.Quantity;
-                existingCartItem.Amount = p.Price * existingCartItem.Quantity;      
+                existingCartItem.Amount = p.Price * existingCartItem.Quantity;
+
+
                 existingCartItem.OrderId = existingOrder?.Id;
 
                 return await Edit(existingCartItem.Id, existingCartItem);
             }
-            
+
             return RedirectToAction("Index", "Shop");
+
+            //if (ModelState.IsValid)
+            //{
+            //    var cart = Request.Cookies["Cart"] != null
+            //        ? JsonConvert.DeserializeObject<List<CartItem>>(Request.Cookies["Cart"])
+            //        : new List<CartItem>();
+            //    var existingCartItem = cart.FirstOrDefault(c => c.ProductId == cartItem.ProductId && c.ProductSizeId == cartItem.ProductSizeId);
+            //    var p = await _context.Products.FirstOrDefaultAsync(_ => _.Id == cartItem.ProductId);
+            //    if (existingCartItem != null)
+            //    {
+            //        existingCartItem.Quantity += cartItem.Quantity;
+            //        existingCartItem.Amount = p.Price * existingCartItem.Quantity;
+            //    }
+            //    else
+            //    {
+            //        cartItem.Amount = p.Price * cartItem.Quantity;
+            //        cart.Add(cartItem);
+            //    }
+            //    var total = cart.Sum(item => (double)item.Amount);                
+            //    var payment = JsonConvert.DeserializeObject<Payment>(Request.Cookies["Payment"]);
+            //    payment.Total = total;
+            //    Response.Cookies.Append("Payment", JsonConvert.SerializeObject(payment));
+            //    Response.Cookies.Append("Cart", JsonConvert.SerializeObject(cart));
+            //    Console.WriteLine(cart);
+            //    Console.WriteLine(payment);
+            //    return RedirectToAction(nameof(CartView));
+            //}
+            //return RedirectToAction("Index", "Shop");
         }
 
         // GET: CartItems/Edit/5
@@ -246,6 +313,9 @@ namespace NhomBroccoli.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateCart(List<CartItem> CartItems)
         {
+            var cart = Request.Cookies["Cart"] != null
+                    ? JsonConvert.DeserializeObject<List<CartItem>>(Request.Cookies["Cart"])
+                    : new List<CartItem>();
             if (ModelState.IsValid)
             {
                 foreach (var cartItem in CartItems)
@@ -300,7 +370,7 @@ namespace NhomBroccoli.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(CartView));
+            return RedirectToAction(nameof(Index));
         }
            
         public async Task<IActionResult> DeleteViewHandler(int id)
