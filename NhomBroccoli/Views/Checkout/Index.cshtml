@@ -25,7 +25,7 @@
             <input type="hidden" name="PayPalId" id="paypal-order-id" />
             <input type="hidden" name="OrderId" value="@Model.Payment.OrderId" />
             <input type="hidden" name="PaymentId" value="@Model.Payment.Id" />
-            <input type="hidden" name="DeliveryDate" value="@DateOnly.FromDateTime(DateTime.Now)" />
+            <input type="hidden" name="DeliveryDate" value="@DateOnly.FromDateTime(DateTime.Now)" />            
             <div class="row">
                 <div class="col-lg-8">
                     <h5>Billing detail</h5>
@@ -81,7 +81,7 @@
                                 @{
                                     for (int i = 1; i <= Model.CartItems.Count; i++)
                                     {
-                                        <li>@i. @Model.CartItems.ElementAt(i - 1).Product.Name <span>$ @Model.CartItems.ElementAt(i - 1).Product.Price</span></li>
+                                        <li>@i. @Model.CartItems.ElementAt(i - 1).Product.Name | @Model.CartItems.ElementAt(i - 1).ProductSize.Size <span>@Model.CartItems.ElementAt(i - 1).Product.Price VND</span></li>
                                     }
                                 }
                                 @* <li>01. Chain buck bag <span>$ 300.0</span></li>
@@ -98,20 +98,20 @@
                                     {
                                         total += cartItem.Amount;
                                     }
-                                    <li>Subtotal <span>$ @total</span></li>
+                                    <li>Subtotal <span>@total VND</span></li>
                                 }
                                 @* <li>Subtotal <span>$ 750.0</span></li> *@
-                                <li>Total <span>$ @Model.Payment.Total</span></li>
+                                <li>Total <span>@Model.Payment.Total VND</span></li>
                             </ul>
                         </div>
                         
                         <button type="submit" class="site-btn mb-4">Place order</button>
                         <div id="paypal-button-container"></div>                        
-                        <button class="site-btn bg-dark text-light mt-4">VNPAY</button>
+                        <button id="vnpay-button" class="site-btn bg-dark text-light mt-4">VNPAY</button>
                     </div>
                 </div>
             </div>
-        </form>
+        </form>        
     </div>
 </section>
 
@@ -154,6 +154,13 @@
                 }
             }).render('#paypal-button-container');
 
+
+            $('#vnpay-button').on('click', function (e) {
+                e.preventDefault(); // Prevent the default form submission
+                var form = $('form.checkout__form');
+                form.attr('action', '@Url.Action("CreatePaymentUrl", "Checkout")');
+                form.submit();
+            });
         });
     </script>
 }

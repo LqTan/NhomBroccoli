@@ -152,7 +152,7 @@ namespace NhomBroccoli.Controllers
                 {
                     HttpOnly = true, // Ngăn chặn truy cập cookie từ script phía client.
                     Secure = true, // Đặt là true nếu sử dụng HTTPS.
-                    SameSite = SameSiteMode.Strict // Điều chỉnh theo nhu cầu của bạn.
+                    //SameSite = SameSiteMode.Strict // Điều chỉnh theo nhu cầu của bạn.
                                                    // Không thiết lập Expires để tạo session cookie.
                 });
 

@@ -59,7 +59,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="cart__price">$ @cartItem.Product.Price</td>                                        
+                                        <td class="cart__price">@cartItem.Product.Price VND</td>
                                         <td class="cart__quantity">
                                             <div class="text-center">
                                                 <input type="hidden" name="CartItems.Index" value="@cartItem.Id" />
@@ -69,7 +69,7 @@
                                                 <input type="number" name="CartItems[@cartItem.Id].Quantity" value="@cartItem.Quantity" min="1" style="border:none;outline:none;max-width:100px">
                                             </div>
                                         </td>
-                                        <td class="cart__total">$ @cartItem.Amount</td>
+                                        <td class="cart__total">@cartItem.Amount VND</td>
                                         <td class="cart__close">
                                             <a href="@Url.Action("DeleteViewHandler", "CartItems", new {id = cartItem.Id})">
                                                 <span class="icon_close"></span>
@@ -118,8 +118,8 @@
                             {
                                 subtotal += (double)cartItem.Amount;
                             }
-                            <li>Subtotal <span>$ @subtotal</span></li>
-                            <li>Total <span>$ @Model.Payment.Total</span></li>
+                            <li>Subtotal <span>@subtotal VND</span></li>
+                            <li>Total <span>@Model.Payment.Total VND</span></li>
                         }                        
                     </ul>
                     <a href="@Url.Action("Index", "Checkout")" class="primary-btn">Proceed to checkout</a>

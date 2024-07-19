@@ -6,11 +6,17 @@ using Microsoft.IdentityModel.Tokens;
 using NhomBroccoli.Data.Context;
 using NhomBroccoli.Data.Entities;
 using System.Text;
+using NhomBroccoli.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.AddEventSourceLogger();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 
 builder.Services.AddDbContext<StoreContext>(options =>
 {

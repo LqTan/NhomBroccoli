@@ -6,6 +6,7 @@ using NhomBroccoli.Data.Entities;
 using NhomBroccoli.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using NhomBroccoli.Services;
 
 namespace NhomBroccoli.Controllers
 {
@@ -13,10 +14,12 @@ namespace NhomBroccoli.Controllers
     {
         private readonly StoreContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        public CheckoutController(StoreContext storeContext, UserManager<ApplicationUser> userManager)
+        private readonly IVnPayService _vnPayService;
+        public CheckoutController(StoreContext storeContext, UserManager<ApplicationUser> userManager, IVnPayService vnPayService)
         {
             _context = storeContext;
             _userManager = userManager;
+            _vnPayService = vnPayService;
         }
         public async Task<IActionResult> Index()
         {
@@ -107,6 +110,85 @@ namespace NhomBroccoli.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return RedirectToAction("Index", "Checkout");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePaymentUrl([Bind("Id,OrderId,Address,DeliveryDate")] Shipment shipment, int? PaymentId)
+        {
+            var token = HttpContext.Request.Cookies["SessionToken"];
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+            var emailClaim = jsonToken?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+            var email = emailClaim.Value;
+
+            var user = await _userManager.FindByEmailAsync(email);
+            var payment = await _context.Payments.FirstOrDefaultAsync(pm => pm.Id == PaymentId);
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == payment.OrderId);
+
+            //-------------------------------------------------------------------------
+            
+
+            _context.Add(shipment);
+            await _context.SaveChangesAsync();
+
+            var model = new PaymentInformationModel
+            {
+                OrderType = "shopping",
+                Amount = (double)payment.Total,
+                OrderDescription = $"VNPAY payments by {user.UserName}",
+                Name = $"{order.Id},"
+            };
+            var url = _vnPayService.CreatePaymentUrl(model, HttpContext);
+
+            return Redirect(url);
+        }
+
+        public async Task<IActionResult> PaymentCallback()
+        {
+            var response = _vnPayService.PaymentExecute(Request.Query);
+
+            var orderDescription = response.OrderDescription.Split(",");
+            var orderId = int.Parse(orderDescription[0]);
+
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+            var payment = await _context.Payments.FirstOrDefaultAsync(pm => pm.OrderId == order.Id);
+
+            payment.PaymentDate = DateOnly.FromDateTime(DateTime.Now);
+            payment.Status = 1;
+            payment.Method = response.PaymentMethod;
+            _context.Update(payment);
+            await _context.SaveChangesAsync();
+
+            order.OrderDate = DateOnly.FromDateTime(DateTime.Now);
+            order.OrderStatus = 1;
+            _context.Update(order);
+            await _context.SaveChangesAsync();
+
+            var _order = new Order
+            {
+                UserId = order.UserId,
+                OrderDate = DateOnly.FromDateTime(DateTime.Now),
+                OrderStatus = 0
+            };
+            _context.Add(_order);
+            await _context.SaveChangesAsync();
+            var _payment = new Payment
+            {
+                OrderId = _order.Id,
+                Method = "Unknown",
+                Total = 0,
+                PaymentDate = DateOnly.FromDateTime(DateTime.Now),
+                Status = 0
+            };
+            _context.Add(_payment);
+            await _context.SaveChangesAsync();
+
+            //return Json(response);
+            return RedirectToAction("Index", "Home");
         }
     }
 }
