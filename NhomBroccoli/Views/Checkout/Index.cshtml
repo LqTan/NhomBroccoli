@@ -121,6 +121,7 @@
     <script>
         $(function () {
             var totalAmount = "@Model.Payment.Total";
+            var total = totalAmount / 25000;
             paypal.Buttons({
                 createOrder: function(data, action) {
                     return action.order.create({
@@ -128,7 +129,7 @@
                             {
                                 "amount": {
                                     "currency_code": "USD",
-                                    "value": totalAmount
+                                    "value": total
                                 },
                                 "items": []
                             }

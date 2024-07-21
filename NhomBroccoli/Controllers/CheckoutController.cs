@@ -15,11 +15,13 @@ namespace NhomBroccoli.Controllers
         private readonly StoreContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IVnPayService _vnPayService;
-        public CheckoutController(StoreContext storeContext, UserManager<ApplicationUser> userManager, IVnPayService vnPayService)
+        private readonly IEmailService _emailService;
+        public CheckoutController(StoreContext storeContext, UserManager<ApplicationUser> userManager, IVnPayService vnPayService, IEmailService emailService)
         {
             _context = storeContext;
             _userManager = userManager;
             _vnPayService = vnPayService;
+            _emailService = emailService;
         }
         public async Task<IActionResult> Index()
         {
@@ -65,6 +67,7 @@ namespace NhomBroccoli.Controllers
             {
                 var payment = await _context.Payments.FirstOrDefaultAsync(pm => pm.Id == PaymentId);
                 var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == payment.OrderId);
+                var user = await _userManager.FindByIdAsync(order.UserId);
                 if (payment != null)
                 {
                     if (!string.IsNullOrEmpty(PayPalId))
@@ -107,6 +110,24 @@ namespace NhomBroccoli.Controllers
 
                 _context.Add(shipment);
                 await _context.SaveChangesAsync();
+
+                var cartItems = await _context.CartItems
+                    .Where(c => c.OrderId == order.Id)
+                    .Include(c => c.Order)
+                    .Include(c => c.ProductSize)
+                    .Include(c => c.Product)
+                    .ThenInclude(p => p.ProductImages)
+                    .ToListAsync();
+
+                var cartItemsPaymentUser = new CartItemsPaymentUser
+                {
+                    CartItems = cartItems,
+                    Payment = payment,
+                    User = user
+                };
+
+                _emailService.SendEmailAsync(cartItemsPaymentUser);
+
                 return RedirectToAction("Index", "Home");
             }
             return RedirectToAction("Index", "Checkout");
@@ -156,6 +177,7 @@ namespace NhomBroccoli.Controllers
 
             var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
             var payment = await _context.Payments.FirstOrDefaultAsync(pm => pm.OrderId == order.Id);
+            var user = await _userManager.FindByIdAsync(order.UserId);
 
             payment.PaymentDate = DateOnly.FromDateTime(DateTime.Now);
             payment.Status = 1;
@@ -186,6 +208,23 @@ namespace NhomBroccoli.Controllers
             };
             _context.Add(_payment);
             await _context.SaveChangesAsync();
+
+            var cartItems = await _context.CartItems
+                    .Where(c => c.OrderId == order.Id)
+                    .Include(c => c.Order)
+                    .Include(c => c.ProductSize)
+                    .Include(c => c.Product)
+                    .ThenInclude(p => p.ProductImages)
+                    .ToListAsync();
+
+            var cartItemsPaymentUser = new CartItemsPaymentUser
+            {
+                CartItems = cartItems,
+                Payment = payment,
+                User = user
+            };
+
+            _emailService.SendEmailAsync(cartItemsPaymentUser);
 
             //return Json(response);
             return RedirectToAction("Index", "Home");

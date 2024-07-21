@@ -7,6 +7,7 @@ using NhomBroccoli.Data.Context;
 using NhomBroccoli.Data.Entities;
 using NhomBroccoli.Helpers;
 using NhomBroccoli.Models;
+using OfficeOpenXml;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -252,22 +253,18 @@ namespace NhomBroccoli.Controllers
             {
                 return NotFound();
             }
+            
+            user.UserName = model.UserName;
+            user.Email = model.Email;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Address = model.Address;
+            user.PhoneNumber = model.Phone;
 
-            if (ModelState.IsValid)
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
             {
-                user.UserName = model.UserName;
-                user.Email = model.Email;
-                user.FirstName = model.FirstName;
-                user.LastName = model.LastName;
-                user.Address = model.Address;
-                user.PhoneNumber = model.Phone;
-
-                var result = await _userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                AddErrors(result);
+                return RedirectToAction(nameof(Index));
             }
             return View(model);
         }
@@ -313,6 +310,36 @@ namespace NhomBroccoli.Controllers
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
+        }
+
+        public async Task<IActionResult> ExportUsersToCsv()
+        {
+            var users = await _userManager.Users.ToListAsync(); // Giả sử trả về danh sách người dùng
+
+            //using (var package = new ExcelPackage())
+            //{
+            //    var worksheet = package.Workbook.Worksheets.Add("Users");
+            //    worksheet.Cells[1, 1].Value = "Email";
+
+            //    for (int i = 0; i < users.Count; i++)
+            //    {
+            //        worksheet.Cells[i + 2, 1].Value = users[i].Email;
+            //    }
+
+            //    var stream = new MemoryStream(package.GetAsByteArray());
+            //    return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "users.xlsx");
+            //}            
+
+            var csvBuilder = new StringBuilder();
+            csvBuilder.AppendLine("Email");
+
+            foreach (var user in users)
+            {
+                csvBuilder.AppendLine(user.Email);
+            }
+
+            var bytes = Encoding.UTF8.GetBytes(csvBuilder.ToString());
+            return File(bytes, "text/csv", "users.csv");
         }
     }
 }
