@@ -1,0 +1,81 @@
+﻿@model IEnumerable<NhomBroccoli.Models.RssFeedItem>
+@{
+    int initialItemCount = 6;
+}
+
+<div class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__links">
+                    <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i> Home</a>
+                    <span>Blog</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="blog spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="blogItemsContainer" class="row">
+                    @foreach (var item in Model.Take(initialItemCount))
+                    {
+                        <div class="col-lg-4 col-md-4 col-sm-6 blog__item">
+                            <div class="blog__item__pic large__item set-bg" data-setbg="@item.ImageUrl"></div>
+                            <div class="blog__item__text">
+                                <h6><a href="@item.Link">@item.Title</a></h6>
+                                <ul>
+                                    <li>@item.PubDate</li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            @if (Model.Count() > initialItemCount)
+            {
+                <div class="col-lg-12 text-center">
+                    <a id="loadMoreBtn" href="javascript:void(0)" class="primary-btn load-btn">Load more posts</a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let allItems = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+            let itemsContainer = document.getElementById('blogItemsContainer');
+            let loadMoreBtn = document.getElementById('loadMoreBtn');
+            let displayedItemsCount = @initialItemCount;
+
+            loadMoreBtn.addEventListener('click', function () {
+                let itemsToLoad = allItems.slice(displayedItemsCount, displayedItemsCount + @initialItemCount);
+                displayedItemsCount += itemsToLoad.length;
+
+                itemsToLoad.forEach(function (item) {
+                    let itemHtml = `
+                                <div class="col-lg-4 col-md-4 col-sm-6 blog__item">
+                                    <div class="blog__item__pic large__item set-bg" data-setbg="${item.ImageUrl}" style="background-image:url('${item.ImageUrl}')"></div>
+                                    <div class="blog__item__text">
+                                        <h6><a href="${item.Link}">${item.Title}</a></h6>
+                                        <ul>
+                                            <li>${item.PubDate}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            `;
+                    itemsContainer.insertAdjacentHTML('beforeend', itemHtml);
+                });
+
+                if (displayedItemsCount >= allItems.length) {
+                    loadMoreBtn.style.display = 'none';
+                }
+            });
+        });
+    </script>
+}

@@ -17,14 +17,16 @@ builder.Logging.AddEventSourceLogger();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IRssService, RssService>();
 builder.Services.AddSingleton<IWebHostEnvironment>(builder.Environment);
 
 builder.Services.AddDbContext<StoreContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ecommerce_store"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ecommerce_store"));    
 });
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@ViewData["Title"] - NhomBroccoli</title>
+    @RenderSection("MetaTags", required: false)
 
     @* Google font *@
     <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
@@ -32,6 +33,16 @@
     <link rel="stylesheet" href="~/Assets/CSS/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="~/Assets/CSS/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="~/Assets/CSS/style.css" type="text/css">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6F5HL7LKCN"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-6F5HL7LKCN');
+    </script>
 
     @* <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" /> *@
 
@@ -72,7 +83,7 @@
         </ul>
         <div class="offcanvas__logo">
             @* <a href="./index.html"><img src="~/Assets/img/logo.png" alt=""></a> *@
-            <a href="@Url.Action("Index", "Home")"><img src="~/Assets/img/logo.png" alt=""></a>
+            <a href="@Url.Action("Index", "Home")"><img src="~/Assets/img/BroccoliLogo.png" alt=""></a>
         </div>
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__auth">
@@ -101,10 +112,10 @@
 
     <header class="header">
         <div class="container-fluid">
-            <div class="row">
+            <div class="row align-items-center">
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
-                        <a href="@Url.Action("Index", "Home")"><img src="~/Assets/img/logo.png" alt=""></a>
+                        <a href="@Url.Action("Index", "Home")"><img src="~/Assets/img/BroccoliLogo.png" alt=""></a>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-7">
@@ -123,7 +134,7 @@
                                     <li><a href="./blog-details.html">Blog Details</a></li>
                                 </ul>
                             </li>
-                            <li><a href="./blog.html">Blog</a></li>
+                            <li><a href="@Url.Action("Index", "Blog")">Blog</a></li>
                             <li><a href="./contact.html">Contact</a></li>
                         </ul>
                     </nav>

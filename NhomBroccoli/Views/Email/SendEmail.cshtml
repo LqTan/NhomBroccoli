@@ -162,7 +162,7 @@
                   <table class="w100p" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;">
                     <tr>
                       <td align="left" valign="middle" class="mobile-center">
-                        <img class="dark-img" src="https://broccolistore.somee.com/Assets/img/logo.png" width="200" height="40" alt="wonderblum" style="color: #4a4a4a; text-align:center; font-weight:bold; font-size:24px; line-height:28px; text-decoration: none; padding: 0;" border="0" />
+                        <img class="dark-img" src="https://broccolistore.somee.com/Assets/img/BroccoliLogo.png" width="40" height="40" alt="wonderblum" style="color: #4a4a4a; text-align:center; font-weight:bold; font-size:24px; line-height:28px; text-decoration: none; padding: 0;" border="0" />
                       </td>
                       <td class="mobile-hide" align="right" valign="middle">
                         <table cellspacing="0" cellpadding="0" border="0" role="presentation">
@@ -171,7 +171,7 @@
                               <p style="font-size: 18px; line-height: 20px; font-weight: 400; margin: 0; color: #ffffff;"><a href="http://litmus.com" target="_blank" style="color: #ffffff; text-decoration: none;">Shop</a> &nbsp;</p>
                             </td>
                             <td valign="middle">
-                              <a href="http://litmus.com" target="_blank" style="color: #ffffff; text-decoration: none;"><img src="shop.png" width="27" height="23" style="display: block; border: 0px;" /></a>
+                              <a href="http://litmus.com" target="_blank" style="color: #ffffff; text-decoration: none;"><img src="https://broccolistore.somee.com/Assets/img/cart.png" width="27" height="23" style="display: block; border: 0px;" /></a>
                             </td>
                           </tr>
                         </table>
@@ -185,7 +185,7 @@
                   <table class="w100p" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;">
                     <tr>
                       <td align="center" style="padding-top: 25px;">
-                        <img src="https://broccolistore.somee.com/Assets/img/logo.png" height="120" style="display: block; border: 0px;" /><br>
+                        <img src="https://broccolistore.somee.com/Assets/img/BroccoliLogo.png" height="120" style="display: block; border: 0px;" /><br>
                         <h2 style="font-size: 30px; font-weight: normal; line-height: 36px; color: #028383; margin: 0;">
                           Thank You For Your Order!
                         </h2>
@@ -203,10 +203,10 @@
                         <table cellspacing="0" cellpadding="0" border="0" width="100%" role="presentation">
                           <tr>
                             <td width="75%" align="left" style="background-color: #d7f1ff; padding: 10px;">
-                              <p style="font-weight: 800;">User:</p>
+                              <p style="font-weight: 800;">Product</p>
                             </td>
                             <td width=" 25%" align="left" style="background-color: #d7f1ff; padding: 10px;">
-                              <p class="blueLinks" style="font-weight: 800;">@Model.User.UserName</p>
+                              <p class="blueLinks" style="font-weight: 800;">Amount</p>
                             </td>
                           </tr>
                           @foreach (var item in Model.CartItems){
@@ -220,7 +220,7 @@
                                     <p>Quantity: @item.Quantity</p>
                                 </td>
                                 <td width="25%" align="left" style="padding: 15px 10px 10px;">
-                                    <p>@item.Product.Price VND</p>
+                                    <p>@item.Amount VND</p>
                                 </td>
                             </tr>
                           }                                                                            
@@ -273,8 +273,8 @@
                             <tr>
                               <td align="left" valign="top">
                                 <p style="font-weight: 800;">Estimated Delivery Date</p>
-                                <p>January 1st, 2024</p>
-
+                                @* <p>January 1st, 2024</p> *@
+                                <p>@Model.Payment.PaymentDate</p>
                               </td>
                             </tr>
                           </table>

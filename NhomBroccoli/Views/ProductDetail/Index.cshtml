@@ -3,6 +3,44 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    ViewData["Title"] = Model.Name;
+    string imageUrl = Url.Content(Model.ProductImages.FirstOrDefault()?.Img ?? "~/Assets/img/not_found.png");
+    string description = Model.Description ?? "No description available";
+    string requestScheme = ViewContext.HttpContext.Request.Scheme;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section MetaTags {
+    <meta name="description" content="@description">
+    <meta name="keywords" content="@Model.Name, shoes, fashion">
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="@Model.Name">
+    <meta property="og:description" content="@description">
+    <meta property="og:image" content="@imageUrl">
+    <meta property="og:url" content="@Url.Action("Index", "ProductDetail", new { id = Model.Id }, requestScheme)">
+    <meta property="og:type" content="website">
+
+    <script type="application/ld+json">
+        {
+            "@@context": "https://schema.org",
+            "@@type": "Product",
+            "name": "@Model.Name",
+            "image": "@imageUrl",
+            "description": "@description",
+            "sku": "@Model.Id",
+            "brand": {
+                "@@type": "Brand",
+                "name": "@(Model.Brand != null ? Model.Brand.Name : "Unknown")"
+            },
+            "offers": {
+                "@@type": "Offer",
+                "priceCurrency": "VND",
+                "price": "@Model.Price",
+                "itemCondition": "https://schema.org/NewCondition",
+                "availability": "https://schema.org/InStock"
+            }
+        }
+    </script>
 }
 
 <div class="breadcrumb-option">
@@ -26,7 +64,7 @@
                 <div class="product__details__pic">
                     <div class="product__details__pic__left product__thumb nice-scroll">
                         <a class="pt active" href="#product-1">
-                            <img src="@Url.Content(Model.ProductImages.ElementAt(0).Img)" alt="">
+                            <img src="@Url.Content(Model.ProductImages.ElementAt(0).Img)" alt="@Model.Name">
                         </a>
                         @{
                             for (int i = 2; i <= 4; i++)
@@ -34,13 +72,13 @@
                                 if (Model.ProductImages.Count >= i)
                                 {
                                     <a class="pt" href="#product-@i">
-                                        <img src="@Url.Content(Model.ProductImages.ElementAt(i - 1).Img)" alt="">
+                                        <img src="@Url.Content(Model.ProductImages.ElementAt(i - 1).Img)" alt="@Model.Name">
                                     </a>
                                 }
                                 else
                                 {
                                     <a class="pt" href="#product-@i">
-                                        <img src="~/Assets/img/not_found.png" alt="">
+                                        <img src="~/Assets/img/not_found.png" alt="Not Found">
                                     </a>
                                 }                                
                             }
@@ -53,11 +91,11 @@
                                 {
                                     if (Model.ProductImages.Count >= i)
                                     {
-                                        <img data-hash="product-@i" class="product__big__img" src="@Url.Content(Model.ProductImages.ElementAt(i - 1).Img)" alt="">
+                                        <img data-hash="product-@i" class="product__big__img" src="@Url.Content(Model.ProductImages.ElementAt(i - 1).Img)" alt="@Model.Name">
                                     }
                                     else
                                     {
-                                        <img data-hash="product-@i" class="product__big__img" src="~/Assets/img/not_found.png" alt="">
+                                        <img data-hash="product-@i" class="product__big__img" src="~/Assets/img/not_found.png" alt="Not Found">
                                     }
                                 }
                             }                            
@@ -152,6 +190,7 @@
                         <div class="tab-pane active" id="tabs-1" role="tabpanel">
                             <h6>Description</h6>
                             <p>
+                                @(Model.Description != null ? Model.Description : "...")
                                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed
                                 quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt loret.
                                 Neque porro lorem quisquam est, qui dolorem ipsum quia dolor si. Nemo enim ipsam
