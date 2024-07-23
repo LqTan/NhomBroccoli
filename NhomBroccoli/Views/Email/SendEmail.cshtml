@@ -1,6 +1,8 @@
 ﻿@model NhomBroccoli.Models.CartItemsPaymentUser;
 @{
     Layout = null;
+
+    var subtotal = Model.CartItems.Sum(c => c.Amount);
 }
 @* <!DOCTYPE html>
 <html>
@@ -162,7 +164,7 @@
                   <table class="w100p" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;">
                     <tr>
                       <td align="left" valign="middle" class="mobile-center">
-                        <img class="dark-img" src="https://broccolistore.somee.com/Assets/img/BroccoliLogo.png" width="40" height="40" alt="wonderblum" style="color: #4a4a4a; text-align:center; font-weight:bold; font-size:24px; line-height:28px; text-decoration: none; padding: 0;" border="0" />
+                        <img class="dark-img" src="https://broccolistore.somee.com/Assets/img/logoMenDesign.png" width="40" height="40" alt="wonderblum" style="color: #4a4a4a; text-align:center; font-weight:bold; font-size:24px; line-height:28px; text-decoration: none; padding: 0;" border="0" />
                       </td>
                       <td class="mobile-hide" align="right" valign="middle">
                         <table cellspacing="0" cellpadding="0" border="0" role="presentation">
@@ -185,7 +187,7 @@
                   <table class="w100p" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;">
                     <tr>
                       <td align="center" style="padding-top: 25px;">
-                        <img src="https://broccolistore.somee.com/Assets/img/BroccoliLogo.png" height="120" style="display: block; border: 0px;" /><br>
+                        <img src="https://broccolistore.somee.com/Assets/img/logoMenDesign.png" height="120" style="display: block; border: 0px;" /><br>
                         <h2 style="font-size: 30px; font-weight: normal; line-height: 36px; color: #028383; margin: 0;">
                           Thank You For Your Order!
                         </h2>
@@ -231,6 +233,14 @@
                       <td align="left" style="padding-top: 20px;">
                         <table cellspacing="0" cellpadding="0" border="0" width="100%" role="presentation">
                           <tr>
+                            <td width="75%" align="left" style="padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">
+                              <p style="font-weight: 800;">SUBTOTAL</p>
+                            </td>
+                            <td width="25%" align="left" style="padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">
+                              <p style="font-weight: 800;">@subtotal VND</p>
+                            </td>
+                          </tr>
+                          <tr>                            
                             <td width="75%" align="left" style="padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">
                               <p style="font-weight: 800;">TOTAL</p>
                             </td>
