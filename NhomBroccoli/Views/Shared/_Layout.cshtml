@@ -122,10 +122,10 @@
                     <nav class="header__menu">
                         <ul>
                             <li><a href="@Url.Action("Index", "Home")">Home</a></li>
-                            <li><a href="#">Women’s</a></li>
-                            <li><a href="#">Men’s</a></li>
+                            <li><a href="@Url.Action("Index", "Shop")">Women’s</a></li>
+                            <li><a href="@Url.Action("Index", "Shop")">Men’s</a></li>
                             <li class="active"><a href="@Url.Action("Index", "Shop")">Shop</a></li>
-                            <li>
+                            @* <li>
                                 <a href="#">Pages</a>
                                 <ul class="dropdown">
                                     <li><a href="./product-details.html">Product Details</a></li>
@@ -133,7 +133,7 @@
                                     <li><a href="./checkout.html">Checkout</a></li>
                                     <li><a href="./blog-details.html">Blog Details</a></li>
                                 </ul>
-                            </li>
+                            </li> *@
                             <li><a href="@Url.Action("Index", "Blog")">Blog</a></li>
                             <li><a href="./contact.html">Contact</a></li>
                         </ul>

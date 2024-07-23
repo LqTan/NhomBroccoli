@@ -12,8 +12,8 @@ using NhomBroccoli.Data.Context;
 namespace NhomBroccoli.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20240714123206_AddProductSizeTable")]
-    partial class AddProductSizeTable
+    [Migration("20240723042657_DbInit")]
+    partial class DbInit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -181,11 +181,9 @@ namespace NhomBroccoli.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -405,8 +403,8 @@ namespace NhomBroccoli.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Total")
-                        .HasColumnType("int");
+                    b.Property<double?>("Total")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -526,6 +524,32 @@ namespace NhomBroccoli.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("NhomBroccoli.Data.Entities.Shipment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly?>("DeliveryDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique()
+                        .HasFilter("[OrderId] IS NOT NULL");
+
+                    b.ToTable("Shipments");
                 });
 
             modelBuilder.Entity("NhomBroccoli.Data.Entities.SubCategory", b =>
@@ -715,6 +739,16 @@ namespace NhomBroccoli.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("NhomBroccoli.Data.Entities.Shipment", b =>
+                {
+                    b.HasOne("NhomBroccoli.Data.Entities.Order", "Order")
+                        .WithOne("Shipment")
+                        .HasForeignKey("NhomBroccoli.Data.Entities.Shipment", "OrderId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("NhomBroccoli.Data.Entities.SubCategory", b =>
                 {
                     b.HasOne("NhomBroccoli.Data.Entities.Category", "Category")
@@ -752,6 +786,8 @@ namespace NhomBroccoli.Migrations
                     b.Navigation("CartItems");
 
                     b.Navigation("Payment");
+
+                    b.Navigation("Shipment");
                 });
 
             modelBuilder.Entity("NhomBroccoli.Data.Entities.Product", b =>

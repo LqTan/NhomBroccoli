@@ -275,7 +275,6 @@ namespace NhomBroccoli.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("ProductSizeId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int?>("Quantity")
@@ -637,8 +636,7 @@ namespace NhomBroccoli.Migrations
                     b.HasOne("NhomBroccoli.Data.Entities.ProductSize", "ProductSize")
                         .WithMany("CartItems")
                         .HasForeignKey("ProductSizeId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Order");
 
