@@ -13,6 +13,7 @@ using NhomBroccoli.Data.Entities;
 
 namespace NhomBroccoli.Controllers
 {
+    [Route("discount")]
     public class DiscountsController : Controller
     {
         private readonly StoreContext _context;
@@ -28,6 +29,7 @@ namespace NhomBroccoli.Controllers
             return View(await _context.Discounts.ToListAsync());
         }
 
+        [HttpGet("detail/{id}")]
         // GET: Discounts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -46,6 +48,7 @@ namespace NhomBroccoli.Controllers
             return View(discount);
         }
 
+        [HttpGet("create")]
         // GET: Discounts/Create
         public IActionResult Create()
         {
@@ -55,7 +58,7 @@ namespace NhomBroccoli.Controllers
         // POST: Discounts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,DiscountCode,DiscountEffectiveStart,DiscountEffectiveEnd,DiscountPercent")] Discount discount)
         {
@@ -68,6 +71,7 @@ namespace NhomBroccoli.Controllers
             return View(discount);
         }
 
+        [HttpGet("edit/{id}")]
         // GET: Discounts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -87,7 +91,7 @@ namespace NhomBroccoli.Controllers
         // POST: Discounts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,DiscountCode,DiscountEffectiveStart,DiscountEffectiveEnd,DiscountPercent")] Discount discount)
         {
@@ -119,6 +123,7 @@ namespace NhomBroccoli.Controllers
             return View(discount);
         }
 
+        [HttpGet("delete/{id}")]
         // GET: Discounts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -138,7 +143,7 @@ namespace NhomBroccoli.Controllers
         }
 
         // POST: Discounts/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost("delete/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -152,14 +157,14 @@ namespace NhomBroccoli.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
+        [HttpPost("check-discount")]
         public async Task<IActionResult> CheckDiscount(string code)
         {
             var discount = await _context.Discounts.FirstOrDefaultAsync(d => d.DiscountCode == code);
             return View(discount);
         }
 
-        [HttpPost]
+        [HttpPost("apply-discount")]
         public async Task<IActionResult> ApplyDiscount(int OrderId, int PaymentId, string CouponCode)
         {
             var existingOrder = await _context.Orders.FirstOrDefaultAsync(o => o.Id == OrderId);

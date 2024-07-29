@@ -14,7 +14,8 @@ using NhomBroccoli.Data.Entities;
 using NhomBroccoli.Models;
 
 namespace NhomBroccoli.Controllers
-{    
+{
+    [Route("cart")]
     public class CartItemsController : Controller
     {
         private readonly StoreContext _context;
@@ -25,14 +26,14 @@ namespace NhomBroccoli.Controllers
             _context = context;
             _userManager = userManager;
         }
-
+        
         // GET: CartItems
         public async Task<IActionResult> Index()
         {
             var storeContext = _context.CartItems.Include(c => c.Order).Include(c => c.Product);
             return View(await storeContext.ToListAsync());
         }
-
+        [HttpGet("item-list")]
         public async Task<IActionResult> CartView()
         {
             var token = HttpContext.Request.Cookies["SessionToken"];
@@ -108,7 +109,7 @@ namespace NhomBroccoli.Controllers
 
             //return View(paymentAndCartItems);
         }
-
+        [HttpGet("detail/{id}")]
         // GET: CartItems/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -128,7 +129,7 @@ namespace NhomBroccoli.Controllers
 
             return View(cartItem);
         }
-
+        [HttpGet("create")]
         // GET: CartItems/Create
         public IActionResult Create()
         {
@@ -136,11 +137,11 @@ namespace NhomBroccoli.Controllers
             ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name");
             return View();
         }
-
+        
         // POST: CartItems/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,OrderId,ProductId,Quantity,Amount")] CartItem cartItem)
         {
@@ -165,8 +166,8 @@ namespace NhomBroccoli.Controllers
             ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", cartItem.ProductId);
             return View(cartItem);
         }
-
-        [HttpPost]
+        
+        [HttpPost("add-to-cart")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart([Bind("Id,OrderId,ProductId,ProductSizeId,Quantity,Amount")] CartItem cartItem)
         {
@@ -251,6 +252,7 @@ namespace NhomBroccoli.Controllers
             //return RedirectToAction("Index", "Shop");
         }
 
+        [HttpGet("edit/{id}")]
         // GET: CartItems/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -264,15 +266,15 @@ namespace NhomBroccoli.Controllers
             {
                 return NotFound();
             }
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Name", cartItem.OrderId);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", cartItem.OrderId);
             ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", cartItem.ProductId);
             return View(cartItem);
         }
-
+        
         // POST: CartItems/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,OrderId,ProductId,Quantity,Amount")] CartItem cartItem)
         {
@@ -308,8 +310,8 @@ namespace NhomBroccoli.Controllers
             ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", cartItem.ProductId);
             return View(cartItem);
         }
-
-        [HttpPost]
+        
+        [HttpPost("update-cart")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateCart(List<CartItem> CartItems)
         {
@@ -338,6 +340,7 @@ namespace NhomBroccoli.Controllers
             return View(nameof(CartView), CartItems);
         }
 
+        [HttpGet("delete/{id}")]
         // GET: CartItems/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -357,9 +360,9 @@ namespace NhomBroccoli.Controllers
 
             return View(cartItem);
         }
-
+        
         // POST: CartItems/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost("delete/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -372,7 +375,8 @@ namespace NhomBroccoli.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-           
+
+        [HttpGet("item-delete-view/{id}")]
         public async Task<IActionResult> DeleteViewHandler(int id)
         {
             var cartItem = await _context.CartItems.FindAsync(id);

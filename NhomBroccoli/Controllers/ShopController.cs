@@ -6,6 +6,7 @@ using NhomBroccoli.Models;
 
 namespace NhomBroccoli.Controllers
 {
+    [Route("shop")]
     public class ShopController : Controller
     {
         private readonly StoreContext _storeContext;
@@ -13,7 +14,8 @@ namespace NhomBroccoli.Controllers
         {
             _storeContext = storeContext;
         }
-        public async Task<IActionResult> Index(int? subCategoryId)
+        //[HttpGet("{subCategoryName}")]
+        public async Task<IActionResult> Index(string? subCategoryName)
         {
             var categories = await _storeContext.Categories
                 .Include(p => p.SubCategories)
@@ -23,9 +25,9 @@ namespace NhomBroccoli.Controllers
                 .Include(p => p.ProductImages)
                 .Include(p => p.SubCategory);
 
-            if (subCategoryId.HasValue)
+            if (!string.IsNullOrEmpty(subCategoryName))
             {
-                productQuery = productQuery.Where(p => p.SubCategoryId == subCategoryId.Value);
+                productQuery = productQuery.Where(p => p.SubCategory.Name == subCategoryName);
             }
 
             var products = await productQuery.ToListAsync();
@@ -40,6 +42,32 @@ namespace NhomBroccoli.Controllers
                 Categories = categories,
                 Products = products
             };
+            return View(viewModel);
+        }
+
+        [HttpGet("{subCategoryName}")]
+        public async Task<IActionResult> IndexWithSubcategory(string? subCategoryName)
+        {
+            var categories = await _storeContext.Categories
+                .Include(p => p.SubCategories)
+                .ToListAsync();
+
+            IQueryable<Product> productQuery = _storeContext.Products
+                .Include(p => p.ProductImages)
+                .Include(p => p.SubCategory);
+
+            if (!string.IsNullOrEmpty(subCategoryName))
+            {
+                productQuery = productQuery.Where(p => p.SubCategory.Name.ToLower().Replace(" ", "-").Replace("\'s", "") == subCategoryName);
+            }
+
+            var products = await productQuery.ToListAsync();            
+
+            var viewModel = new CategoriesAndProducts
+            {
+                Categories = categories,
+                Products = products
+            };            
             return View(viewModel);
         }
     }

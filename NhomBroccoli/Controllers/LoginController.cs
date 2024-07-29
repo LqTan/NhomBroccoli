@@ -2,6 +2,7 @@
 
 namespace NhomBroccoli.Controllers
 {
+    [Route("login")]
     public class LoginController : Controller
     {
         public IActionResult Index()

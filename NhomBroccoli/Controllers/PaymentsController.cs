@@ -10,6 +10,7 @@ using NhomBroccoli.Data.Entities;
 
 namespace NhomBroccoli.Controllers
 {
+    [Route("payment")]
     public class PaymentsController : Controller
     {
         private readonly StoreContext _context;
@@ -26,6 +27,7 @@ namespace NhomBroccoli.Controllers
             return View(await storeContext.ToListAsync());
         }
 
+        [HttpGet("detail/{id}")]
         // GET: Payments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -46,18 +48,19 @@ namespace NhomBroccoli.Controllers
             return View(payment);
         }
 
+        [HttpGet("create")]
         // GET: Payments/Create
         public IActionResult Create()
         {
             ViewData["DiscountId"] = new SelectList(_context.Discounts, "Id", "DiscountCode");
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "OrderDate");
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id");
             return View();
         }
 
         // POST: Payments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,OrderId,Method,Total,PaymentDate,Status,DiscountId")] Payment payment)
         {
@@ -68,10 +71,11 @@ namespace NhomBroccoli.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["DiscountId"] = new SelectList(_context.Discounts, "Id", "DiscountCode", payment.DiscountId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "OrderDate", payment.OrderId);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", payment.OrderId);
             return View(payment);
         }
 
+        [HttpGet("edit/{id}")]
         // GET: Payments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -86,14 +90,14 @@ namespace NhomBroccoli.Controllers
                 return NotFound();
             }
             ViewData["DiscountId"] = new SelectList(_context.Discounts, "Id", "DiscountCode", payment.DiscountId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "OrderDate", payment.OrderId);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", payment.OrderId);
             return View(payment);
         }
 
         // POST: Payments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,OrderId,Method,Total,PaymentDate,Status,DiscountId")] Payment payment)
         {
@@ -123,10 +127,11 @@ namespace NhomBroccoli.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["DiscountId"] = new SelectList(_context.Discounts, "Id", "DiscountCode", payment.DiscountId);
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "OrderDate", payment.OrderId);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", payment.OrderId);
             return View(payment);
         }
 
+        [HttpGet("delete/{id}")]
         // GET: Payments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -148,7 +153,7 @@ namespace NhomBroccoli.Controllers
         }
 
         // POST: Payments/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost("delete/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

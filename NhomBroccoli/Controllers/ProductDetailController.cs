@@ -11,16 +11,17 @@ namespace NhomBroccoli.Controllers
         {
             _storeContext = storeContext;
         }
-        public async Task<IActionResult> Index(int? id)
+        [Route("{subCategory}/{productName}")]
+        public async Task<IActionResult> Index(string? subCategory, string? productName)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(productName))
             {
                 return NotFound();
             }
             var product = await _storeContext.Products
                 .Include(p => p.ProductImages)
                 .Include(p => p.ProductSizes)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(p => p.Name.ToLower().Replace(" ", "-") == productName);
             if (product == null)
             {
                 return NotFound();

@@ -16,6 +16,7 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace NhomBroccoli.Controllers
 {
+    [Route("account")]
     public class AcountController : Controller
     {
         private readonly StoreContext _context;
@@ -40,6 +41,7 @@ namespace NhomBroccoli.Controllers
             return View(await _userManager.Users.ToListAsync());
         }
 
+        [HttpGet("detail/{id}")]
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -56,13 +58,14 @@ namespace NhomBroccoli.Controllers
             return View(user);
         }
 
+        [HttpGet("create")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: ApplicationUser/Create
-        [HttpPost]
+        [HttpPost("create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("UserName,Email,FirstName,LastName,Password,Address,Phone")] ApplicationUserViewModel model)
         {
@@ -94,7 +97,7 @@ namespace NhomBroccoli.Controllers
             return View(model);
         }
 
-        [HttpPost]
+        [HttpPost("signup")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignUp([Bind("UserName,Email,FirstName,LastName,Password,Address,Phone")] ApplicationUserViewModel model)
         {
@@ -121,7 +124,7 @@ namespace NhomBroccoli.Controllers
             return RedirectToAction("Index", "Register");
         }
 
-        [HttpPost]
+        [HttpPost("signin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignIn([Bind("Email,Password")] SignInModel model)
         {
@@ -187,7 +190,7 @@ namespace NhomBroccoli.Controllers
             return RedirectToAction("Index", "Login");
         }
 
-        [HttpPost]
+        [HttpPost("logout")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
@@ -212,6 +215,7 @@ namespace NhomBroccoli.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet("edit/{id}")]
         // GET: ApplicationUser/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
@@ -239,7 +243,7 @@ namespace NhomBroccoli.Controllers
         }
 
         // POST: ApplicationUser/Edit/5
-        [HttpPost]
+        [HttpPost("edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("UserName,Email,FirstName,LastName,Address,Phone")] ApplicationUserViewModel model)
         {
@@ -269,6 +273,7 @@ namespace NhomBroccoli.Controllers
             return View(model);
         }
 
+        [HttpGet("delete/{id}")]
         // GET: ApplicationUser/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
@@ -287,7 +292,7 @@ namespace NhomBroccoli.Controllers
         }
 
         // POST: ApplicationUser/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost("delete/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
@@ -312,6 +317,7 @@ namespace NhomBroccoli.Controllers
             }
         }
 
+        [HttpGet("export-user")]
         public async Task<IActionResult> ExportUsersToCsv()
         {
             var users = await _userManager.Users.ToListAsync(); // Giả sử trả về danh sách người dùng

@@ -10,6 +10,7 @@ using NhomBroccoli.Data.Entities;
 
 namespace NhomBroccoli.Controllers
 {
+    [Route("category")]
     public class CategoriesController : Controller
     {
         private readonly StoreContext _context;
@@ -25,6 +26,7 @@ namespace NhomBroccoli.Controllers
             return View(await _context.Categories.ToListAsync());
         }
 
+        [HttpGet("detail/{id}")]
         // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -43,6 +45,7 @@ namespace NhomBroccoli.Controllers
             return View(category);
         }
 
+        [HttpGet("create")]
         // GET: Categories/Create
         public IActionResult Create()
         {
@@ -52,7 +55,7 @@ namespace NhomBroccoli.Controllers
         // POST: Categories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
         {
@@ -65,6 +68,7 @@ namespace NhomBroccoli.Controllers
             return View(category);
         }
 
+        [HttpGet("edit/{id}")]
         // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -84,7 +88,7 @@ namespace NhomBroccoli.Controllers
         // POST: Categories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Category category)
         {
@@ -116,6 +120,7 @@ namespace NhomBroccoli.Controllers
             return View(category);
         }
 
+        [HttpGet("delete/{id}")]
         // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -135,7 +140,7 @@ namespace NhomBroccoli.Controllers
         }
 
         // POST: Categories/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost("delete/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

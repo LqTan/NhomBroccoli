@@ -74,6 +74,31 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+//app.MapControllerRoute(
+//    name: "acountSignUp",
+//    pattern: "account/signin",
+//    defaults: new { controller = "Acount", action = "SignIn" });
+
+//app.MapControllerRoute(
+//    name: "acountSignUp",
+//    pattern: "account/signup",
+//    defaults: new { controller = "Acount", action = "SignUp" });
+
+//app.MapControllerRoute(
+//    name: "cartItemsCartView",
+//    pattern: "cart-item",
+//    defaults: new { controller = "CartItems", action = "CartView" });
+
+//app.MapControllerRoute(
+//    name: "shop",
+//    pattern: "shop",
+//    defaults: new { controller = "Shop", action = "Index" });
+
+//app.MapControllerRoute(
+//    name: "productDetails",
+//    pattern: "{subCategory}/{productName}",
+//    defaults: new { controller = "ProductDetail", action = "Index" });
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

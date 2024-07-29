@@ -10,6 +10,7 @@ using NhomBroccoli.Services;
 
 namespace NhomBroccoli.Controllers
 {
+    [Route("checkout")]
     public class CheckoutController : Controller
     {
         private readonly StoreContext _context;
@@ -60,7 +61,7 @@ namespace NhomBroccoli.Controllers
             return View(cartItemsPaymentUser);
         }
 
-        [HttpPost]
+        [HttpPost("complete")]
         public async Task<IActionResult> CompleteCheckout([Bind("Id,OrderId,Address,DeliveryDate")] Shipment shipment, string? PayPalId, int? PaymentId)
         {
             if (ModelState.IsValid)
@@ -133,7 +134,7 @@ namespace NhomBroccoli.Controllers
             return RedirectToAction("Index", "Checkout");
         }
 
-        [HttpPost]
+        [HttpPost("create-vnpay-url")]
         public async Task<IActionResult> CreatePaymentUrl([Bind("Id,OrderId,Address,DeliveryDate")] Shipment shipment, int? PaymentId)
         {
             var token = HttpContext.Request.Cookies["SessionToken"];
@@ -168,6 +169,7 @@ namespace NhomBroccoli.Controllers
             return Redirect(url);
         }
 
+        [HttpGet("vnpay-payment-callback")]
         public async Task<IActionResult> PaymentCallback()
         {
             var response = _vnPayService.PaymentExecute(Request.Query);

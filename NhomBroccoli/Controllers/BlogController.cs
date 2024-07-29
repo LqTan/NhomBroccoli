@@ -3,6 +3,7 @@ using NhomBroccoli.Services;
 
 namespace NhomBroccoli.Controllers
 {
+    [Route("blog")]
     public class BlogController : Controller
     {
         private readonly IRssService _rssService;
