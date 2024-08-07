@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using NhomBroccoli.Data.Context;
 using NhomBroccoli.Data.Entities;
 using NhomBroccoli.Models;
+using OfficeOpenXml;
 
 namespace NhomBroccoli.Controllers
 {
@@ -30,8 +31,58 @@ namespace NhomBroccoli.Controllers
         // GET: CartItems
         public async Task<IActionResult> Index()
         {
-            var storeContext = _context.CartItems.Include(c => c.Order).Include(c => c.Product);
+            var storeContext = _context.CartItems
+                .Include(c => c.Order)
+                .Include(c => c.Product)
+                .Include(c => c.ProductSize);
             return View(await storeContext.ToListAsync());
+        }
+        [HttpGet("export-cartitems")]
+        public async Task<IActionResult> ExportCartItems()
+        {
+            var cartItems = await _context.CartItems
+                .Include(c => c.Product)
+                .Include(c => c.ProductSize)
+                .Include(c => c.Order)
+                .ThenInclude(o => o.OrderUser)
+                .ToListAsync();
+
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var package = new OfficeOpenXml.ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Danh sach don hang da mua");
+
+                // Header row
+                worksheet.Cells[1, 1].Value = "Product Name";
+                worksheet.Cells[1, 2].Value = "Product Size";
+                worksheet.Cells[1, 3].Value = "Quantity";
+                worksheet.Cells[1, 4].Value = "Amount";
+                worksheet.Cells[1, 5].Value = "Customer username";
+                worksheet.Cells[1, 6].Value = "Email";
+                worksheet.Cells[1, 7].Value = "Order date";
+
+                // Data rows
+                for (int i = 0; i < cartItems.Count; i++)
+                {
+                    worksheet.Cells[i + 2, 1].Value = cartItems[i].Product.Name;
+                    worksheet.Cells[i + 2, 2].Value = cartItems[i].ProductSize.Size;
+                    worksheet.Cells[i + 2, 3].Value = cartItems[i].Quantity;
+                    worksheet.Cells[i + 2, 4].Value = cartItems[i].Amount;
+                    worksheet.Cells[i + 2, 5].Value = cartItems[i].Order.OrderUser.UserName;
+                    worksheet.Cells[i + 2, 6].Value = cartItems[i].Order.OrderUser.Email;
+
+                    var orderDate = cartItems[i].Order.OrderDate;
+                    worksheet.Cells[i + 2, 7].Value = orderDate.HasValue ? orderDate.Value.ToDateTime(new TimeOnly(0, 0)) : (DateTime?)null;
+                    worksheet.Cells[i + 2, 7].Style.Numberformat.Format = "dd/mm/yyyy"; // Format as date
+                }
+
+                var stream = new MemoryStream();
+                package.SaveAs(stream);
+
+                var content = stream.ToArray();
+
+                return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Broccoli_orders.xlsx");
+            }
         }
         [HttpGet("item-list")]
         public async Task<IActionResult> CartView()
@@ -133,7 +184,7 @@ namespace NhomBroccoli.Controllers
         // GET: CartItems/Create
         public IActionResult Create()
         {
-            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Name");
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id");
             ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name");
             return View();
         }
@@ -268,6 +319,7 @@ namespace NhomBroccoli.Controllers
             }
             ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", cartItem.OrderId);
             ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", cartItem.ProductId);
+            ViewData["ProductSizeId"] = new SelectList(_context.ProductSize, "Id", "Size", cartItem.ProductSizeId);
             return View(cartItem);
         }
         
@@ -276,7 +328,7 @@ namespace NhomBroccoli.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost("edit/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,OrderId,ProductId,Quantity,Amount")] CartItem cartItem)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,OrderId,ProductId,ProductSizeId,Quantity,Amount")] CartItem cartItem)
         {
             if (id != cartItem.Id)
             {
@@ -308,6 +360,7 @@ namespace NhomBroccoli.Controllers
             }
             ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Name", cartItem.OrderId);
             ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", cartItem.ProductId);
+            ViewData["ProductSizeId"] = new SelectList(_context.ProductSize, "Id", "Size", cartItem.ProductSizeId);
             return View(cartItem);
         }
         
